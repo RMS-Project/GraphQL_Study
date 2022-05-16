@@ -1,0 +1,13 @@
+{
+  "name": "Project_GraphQL",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node -r esm ."
+  },
+  "devDependencies": {
+    "esm": "^3.2.25"
+  }
+}
