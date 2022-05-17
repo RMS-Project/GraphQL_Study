@@ -1,6 +1,18 @@
 // Importação da biblioteca http.
 import { createServer } from 'http';
 
+// Biblioteca file System.
+// Lê arquivos do sistema como código estático HTML.
+// readFile - Lê os arquivos assincronamente.
+import { readFile } from 'fs';
+
+// Trabalha com caminhos relativos.
+// resolve - Vai injetor para cada modulo o caminho onde ele se encontra.
+import{ resolve } from 'path';
+
+// Decodifica as QueryStrings
+import { parse } from 'querystring';
+
 // Cria um servidor.
 // const server = createServer();
 
@@ -40,6 +52,73 @@ const server = createServer((request, response) => {
 
 			// Finaliza a resposta e envia para o cliente. 
 			response.end();
+			break;
+		}
+
+		case '/home': {
+			// Vai injetor para cada modulo o caminho onde ele se encontra.
+			const path = resolve(__dirname, './pages/home.html');
+
+			// Node trabalha com callback para processos acincronos.
+			// recebendo primeiramente um erro e depois a arquivo
+			readFile(path, (error, file) => {
+				// Caso não encontre o arquivo.
+				if (error) {
+					response.writeHead(500, 'Can\'t process HTML file.');
+					response.end();
+					return;
+				}
+
+				response.writeHead(200);
+				response.write(file);
+				response.end();
+			})
+			break;
+		}
+
+		case '/sign-in': {
+			// Vai injetor para cada modulo o caminho onde ele se encontra.
+			const path = resolve(__dirname, './pages/sign-in.html');
+
+			// Node trabalha com callback para processos acincronos.
+			// recebendo primeiramente um erro e depois a arquivo
+			readFile(path, (error, file) => {
+				// Caso não encontre o arquivo.
+				if (error) {
+					response.writeHead(500, 'Can\'t process HTML file.');
+					response.end();
+					return;
+				}
+
+				response.writeHead(200);
+				response.write(file);
+				response.end();
+			})
+			break;
+		}
+
+		case '/authenticate': {
+			let data = '';
+
+			// Patterne de eventos
+			// Lê os dados pouco a pouco.
+			// chunk - Evento que recebe as partes.
+			request.on('data', (chuck) => {
+				// Estas partes são somadas em data.
+				// data vem codificado em querySring como parate da URL.
+				data += chuck;
+			})
+
+			// Quando terminar de ler o arquivo
+			// vai redirecionar o caminho para a Home.
+			request.on('end', ()=> {
+				// parser - transforma queryString em objeto.
+				const params = parse(data);
+				response.writeHead(301, {
+					Location: '/home',
+				});
+				response.end();
+			});
 			break;
 		}
 
